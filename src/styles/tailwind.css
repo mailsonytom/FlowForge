@@ -1,0 +1,4 @@
+@import "tailwindcss";
+
+/* Tell Tailwind where your files are */
+@source "../src/**/*.{js,ts,jsx,tsx}";
