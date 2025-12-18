@@ -1,9 +1,14 @@
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import { useAuth } from "../auth/useAuth";
 import { USER_ROLES } from "../auth/auth.types";
+import { ROLE_ACCESS } from "./roleGuards";
+import { ProtectedRoute } from "./ProtectedRoute.jsx";
+import { MainLayout } from "../layouts/MainLayout.jsx";
+import Dashboard from "../pages/Dashboard.jsx";
+import AddProject from "../pages/AddProject.jsx";
 
 export function AppRoutes() {
-  const { login, logout, isAuthenticated } = useAuth();
+  const { login, logout } = useAuth();
 
   return (
     <Routes>
@@ -27,25 +32,32 @@ export function AppRoutes() {
           </div>
         }
       />
-
       <Route
-        path="/dashboard"
         element={
-          isAuthenticated ? (
-            <div>
-              <h1>Dashboard</h1>
-              <button
-                className="px-4 py-2 bg-red-500 text-white rounded cursor-pointer"
-                onClick={logout}
-              >
-                Logout
-              </button>
-            </div>
-          ) : (
-            <Navigate to="/" />
-          )
+          <ProtectedRoute allowedRoles={ROLE_ACCESS.DASHBOARD}>
+            <MainLayout />
+          </ProtectedRoute>
         }
-      />
+      >
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute allowedRoles={ROLE_ACCESS.DASHBOARD}>
+              <Dashboard logout={logout} />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/add-project"
+          element={
+            <ProtectedRoute allowedRoles={ROLE_ACCESS.ADD_PROJECT}>
+              <AddProject />
+            </ProtectedRoute>
+          }
+        />
+      </Route>
+
       <Route path="*" element={<div>Not Found</div>} />
     </Routes>
   );
