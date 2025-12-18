@@ -21,6 +21,14 @@ export function MainLayout() {
         >
           Add Project
         </NavLink>
+        <NavLink
+          to="/add-user"
+          className={({ isActive }) =>
+            `block px-2 py-1 rounded ${isActive ? "bg-gray-700" : ""}`
+          }
+        >
+          Add User
+        </NavLink>
       </nav>
 
       {/* Main Content */}

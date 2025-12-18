@@ -8,3 +8,14 @@ export const projectSchema = yup.object({
 
   description: yup.string().required("Description is required"),
 });
+
+export const userSchema = yup.object({
+  name: yup.string().required("Name is required"),
+
+  email: yup.string().email("Invalid email").required("Email is required"),
+
+  role: yup
+    .string()
+    .oneOf(["admin", "manager", "user"])
+    .required("Role is required"),
+});

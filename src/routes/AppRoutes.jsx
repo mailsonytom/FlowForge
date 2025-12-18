@@ -6,6 +6,7 @@ import { ProtectedRoute } from "./ProtectedRoute.jsx";
 import { MainLayout } from "../layouts/MainLayout.jsx";
 import Dashboard from "../pages/Dashboard.jsx";
 import AddProject from "../pages/AddProject.jsx";
+import AddUser from "../pages/AddUser.jsx";
 
 export function AppRoutes() {
   const { login, logout } = useAuth();
@@ -53,6 +54,14 @@ export function AppRoutes() {
           element={
             <ProtectedRoute allowedRoles={ROLE_ACCESS.ADD_PROJECT}>
               <AddProject />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/add-user"
+          element={
+            <ProtectedRoute allowedRoles={ROLE_ACCESS.ADD_USER}>
+              <AddUser />
             </ProtectedRoute>
           }
         />
