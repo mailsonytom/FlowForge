@@ -3,7 +3,60 @@ import { http, HttpResponse } from "msw";
 let projects = [];
 let users = [];
 
+const mockUsers = [
+  {
+    id: "1",
+    name: "Admin User",
+    email: "admin@test.com",
+    password: "admin123",
+    role: "admin",
+  },
+  {
+    id: "2",
+    name: "Manager User",
+    email: "manager@test.com",
+    password: "manager123",
+    role: "manager",
+  },
+  {
+    id: "3",
+    name: "Normal User",
+    email: "user@test.com",
+    password: "user123",
+    role: "user",
+  },
+];
+
 export const handlers = [
+  // POST /login
+  http.post("/login", async ({ request }) => {
+    const { email, password } = await request.json();
+
+    const user = mockUsers.find(
+      (u) => u.email === email && u.password === password
+    );
+
+    if (!user) {
+      return HttpResponse.json(
+        { message: "Invalid email or password" },
+        { status: 401 }
+      );
+    }
+
+    return HttpResponse.json(
+      {
+        token: "fake-jwt-token",
+        user: {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          role: user.role,
+        },
+      },
+      { status: 200 }
+    );
+  }),
+
   // GET /projects
   http.get("/projects", () => {
     return HttpResponse.json(projects, {

@@ -1,34 +1,24 @@
 import { Outlet, NavLink } from "react-router-dom";
+import { useAuth } from "../auth/useAuth";
+import { canAccess } from "../utils/permissions";
 
 export function MainLayout() {
+  const { user } = useAuth();
+
   return (
     <div className="flex min-h-screen">
       <nav className="space-y-2">
-        <NavLink
-          to="/dashboard"
-          className={({ isActive }) =>
-            `block px-2 py-1 rounded ${isActive ? "bg-gray-700" : ""}`
-          }
-        >
-          Dashboard
-        </NavLink>
+        {canAccess(user.role, "DASHBOARD") && (
+          <NavLink to="/dashboard">Dashboard</NavLink>
+        )}
 
-        <NavLink
-          to="/add-project"
-          className={({ isActive }) =>
-            `block px-2 py-1 rounded ${isActive ? "bg-gray-700" : ""}`
-          }
-        >
-          Add Project
-        </NavLink>
-        <NavLink
-          to="/add-user"
-          className={({ isActive }) =>
-            `block px-2 py-1 rounded ${isActive ? "bg-gray-700" : ""}`
-          }
-        >
-          Add User
-        </NavLink>
+        {canAccess(user.role, "ADD_PROJECT") && (
+          <NavLink to="/add-project">Add Project</NavLink>
+        )}
+
+        {canAccess(user.role, "ADD_USER") && (
+          <NavLink to="/add-user">Add User</NavLink>
+        )}
       </nav>
 
       {/* Main Content */}
