@@ -2,6 +2,7 @@ import { http, HttpResponse } from "msw";
 
 let projects = [];
 let users = [];
+let pages = [];
 
 const mockUsers = [
   {
@@ -97,5 +98,30 @@ export const handlers = [
     users.push(newUser);
 
     return HttpResponse.json(newUser, { status: 201 });
+  }),
+
+  // GET /projects/:projectId/pages
+  http.get("/projects/:projectId/pages", ({ params }) => {
+    const { projectId } = params;
+    const projectPages = pages.filter((p) => p.projectId === projectId);
+
+    return HttpResponse.json(projectPages, { status: 200 });
+  }),
+
+  // POST /projects/:projectId/pages
+  http.post("/projects/:projectId/pages", async ({ request, params }) => {
+    const { projectId } = params;
+    const body = await request.json();
+
+    const newPage = {
+      id: Date.now().toString(),
+      projectId,
+      title: body.title,
+      thumbnailImage: body.thumbnailImage || null,
+    };
+
+    pages.push(newPage);
+
+    return HttpResponse.json(newPage, { status: 201 });
   }),
 ];

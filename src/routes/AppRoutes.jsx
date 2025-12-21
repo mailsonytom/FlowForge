@@ -4,10 +4,12 @@ import { USER_ROLES } from "../auth/auth.types";
 import { ROLE_ACCESS } from "./roleGuards";
 import { ProtectedRoute } from "./ProtectedRoute.jsx";
 import { MainLayout } from "../layouts/MainLayout.jsx";
+import DashboardLayout from "../layouts/DashboardLayout.jsx";
 import Login from "../pages/Login.jsx";
 import Dashboard from "../pages/Dashboard.jsx";
 import AddProject from "../pages/AddProject.jsx";
 import AddUser from "../pages/AddUser.jsx";
+import Project from "../pages/Project.jsx";
 
 export function AppRoutes() {
   const { login, logout } = useAuth();
@@ -18,7 +20,7 @@ export function AppRoutes() {
       <Route
         element={
           <ProtectedRoute allowedRoles={ROLE_ACCESS.DASHBOARD}>
-            <MainLayout />
+            <DashboardLayout />
           </ProtectedRoute>
         }
       >
@@ -44,6 +46,14 @@ export function AppRoutes() {
           element={
             <ProtectedRoute allowedRoles={ROLE_ACCESS.ADD_USER}>
               <AddUser />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/projects/:projectId"
+          element={
+            <ProtectedRoute allowedRoles={ROLE_ACCESS.DASHBOARD}>
+              <Project />
             </ProtectedRoute>
           }
         />

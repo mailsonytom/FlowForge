@@ -6,7 +6,7 @@ export function MainLayout() {
   const { user } = useAuth();
 
   return (
-    <div className="flex min-h-screen">
+    <div className="h-screen w-screen flex bg-gray-50">
       <nav className="space-y-2">
         {canAccess(user.role, "DASHBOARD") && (
           <NavLink to="/dashboard">Dashboard</NavLink>
@@ -22,7 +22,7 @@ export function MainLayout() {
       </nav>
 
       {/* Main Content */}
-      <main className="flex-1 p-6 bg-gray-100">
+      <main>
         <Outlet />
       </main>
     </div>

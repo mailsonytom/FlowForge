@@ -1,22 +1,36 @@
 import { useState } from "react";
 import { AuthContext } from "./AuthContext.jsx";
-import { useNavigate } from "react-router-dom";
+
+const STORAGE_KEY = "flowforge_auth";
+
+function getStoredAuth() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch {
+    return null;
+  }
+}
 
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(null);
-  const [token, setToken] = useState(null);
-  const navigate = useNavigate();
+  const storedAuth = getStoredAuth();
+  const [user, setUser] = useState(storedAuth?.user || null);
+  const [token, setToken] = useState(storedAuth?.token || null);
 
   const login = (jwt, userData) => {
     setToken(jwt);
     setUser(userData);
-    navigate("/dashboard");
+
+    localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify({ token: jwt, user: userData })
+    );
   };
 
   const logout = () => {
     setToken(null);
     setUser(null);
-    navigate("/");
+    localStorage.removeItem(STORAGE_KEY);
   };
 
   const value = {

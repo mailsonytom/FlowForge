@@ -28,7 +28,7 @@ export default function Login() {
       });
 
       login(response.token, response.user);
-      navigate("/dashboard");
+      navigate("/dashboard", { replace: true });
     } catch (err) {
       setError(err.message);
     }
