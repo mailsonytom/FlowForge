@@ -1,11 +1,12 @@
 import { useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { loadPages, clearPages, addPage } from "../store/slices/page.slice";
 
 export default function Project() {
   const { projectId } = useParams();
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
 
   const { items, loading } = useAppSelector((state) => state.pages);
 
@@ -17,6 +18,12 @@ export default function Project() {
     };
   }, [dispatch, projectId]);
 
+  const handlePageClick = (pageId) => () => {
+    // Navigate to page details or workflow view
+    // For example, using react-router's useNavigate:
+    navigate(`/pages/${pageId}/workflow`);
+  };
+
   if (loading) return <p>Loading pages...</p>;
 
   return (
@@ -25,7 +32,11 @@ export default function Project() {
 
       <div className="grid grid-cols-3 gap-4">
         {items.map((page) => (
-          <div key={page.id} className="border p-3 cursor-pointer hover:shadow">
+          <div
+            key={page.id}
+            className="border p-3 cursor-pointer hover:shadow"
+            onClick={handlePageClick(page.id)}
+          >
             <div className="h-24 bg-gray-200 mb-2">
               {page.thumbnailImage ? (
                 <img src={page.thumbnailImage} alt="" />
@@ -48,6 +59,7 @@ export default function Project() {
             })
           )
         }
+        className="mt-6 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition cursor-pointer"
       >
         Add Page
       </button>

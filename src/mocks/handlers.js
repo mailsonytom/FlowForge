@@ -3,6 +3,7 @@ import { http, HttpResponse } from "msw";
 let projects = [];
 let users = [];
 let pages = [];
+let workflows = [];
 
 const mockUsers = [
   {
@@ -123,5 +124,67 @@ export const handlers = [
     pages.push(newPage);
 
     return HttpResponse.json(newPage, { status: 201 });
+  }),
+
+  // GET /pages/:pageId/workflow
+  http.get("/pages/:pageId/workflow", ({ params }) => {
+    const workflow = workflows.find((w) => w.pageId === params.pageId);
+
+    return HttpResponse.json(workflow || null, { status: 200 });
+  }),
+
+  // POST /pages/:pageId/workflow
+  http.post("/pages/:pageId/workflow", async ({ request, params }) => {
+    const body = await request.json();
+
+    const newWorkflow = {
+      id: Date.now().toString(),
+      pageId: params.pageId,
+      description: body.description,
+      status: "pending_approval",
+      currentVersion: 0,
+      updatedBy: body.updatedBy,
+      updatedAt: new Date().toISOString(),
+    };
+
+    workflows = workflows.filter((w) => w.pageId !== params.pageId);
+    workflows.push(newWorkflow);
+
+    return HttpResponse.json(newWorkflow, { status: 201 });
+  }),
+
+  // POST /pages/:pageId/workflow/approve
+  http.post("/pages/:pageId/workflow/approve", ({ params }) => {
+    const workflow = workflows.find((w) => w.pageId === params.pageId);
+
+    if (!workflow) {
+      return HttpResponse.json(
+        { message: "Workflow not found" },
+        { status: 404 }
+      );
+    }
+
+    workflow.status = "approved";
+    workflow.currentVersion += 1;
+    workflow.approvedBy = "Manager";
+    workflow.approvedAt = new Date().toISOString();
+
+    return HttpResponse.json(workflow, { status: 200 });
+  }),
+
+  // POST /pages/:pageId/workflow/reject
+  http.post("/pages/:pageId/workflow/reject", ({ params }) => {
+    const workflow = workflows.find((w) => w.pageId === params.pageId);
+
+    if (!workflow) {
+      return HttpResponse.json(
+        { message: "Workflow not found" },
+        { status: 404 }
+      );
+    }
+
+    workflow.status = "rejected";
+
+    return HttpResponse.json(workflow, { status: 200 });
   }),
 ];

@@ -10,6 +10,7 @@ import Dashboard from "../pages/Dashboard.jsx";
 import AddProject from "../pages/AddProject.jsx";
 import AddUser from "../pages/AddUser.jsx";
 import Project from "../pages/Project.jsx";
+import Workflow from "../pages/Workflow.jsx";
 
 export function AppRoutes() {
   const { login, logout } = useAuth();
@@ -54,6 +55,14 @@ export function AppRoutes() {
           element={
             <ProtectedRoute allowedRoles={ROLE_ACCESS.DASHBOARD}>
               <Project />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/pages/:pageId/workflow"
+          element={
+            <ProtectedRoute allowedRoles={ROLE_ACCESS.WORKFLOW_EDIT}>
+              <Workflow />
             </ProtectedRoute>
           }
         />
