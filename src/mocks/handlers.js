@@ -96,7 +96,7 @@ export const handlers = [
       ...body,
     };
 
-    users.push(newUser);
+    mockUsers.push(newUser);
 
     return HttpResponse.json(newUser, { status: 201 });
   }),

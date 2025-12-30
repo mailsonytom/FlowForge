@@ -40,9 +40,18 @@ export default function AddUser() {
         />
         {errors.email && <p className="text-red-500">{errors.email.message}</p>}
 
+        <input
+          type="password"
+          className="border p-2 w-full"
+          placeholder="Password"
+          {...register("password")}
+        />
+        {errors.password && (
+          <p className="text-red-500">{errors.password.message}</p>
+        )}
+
         <select className="border p-2 w-full" {...register("role")}>
           <option value="">Select role</option>
-          <option value="admin">Admin</option>
           <option value="manager">Manager</option>
           <option value="user">User</option>
         </select>
