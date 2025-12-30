@@ -9,8 +9,6 @@ export default function AddProject() {
   const dispatch = useAppDispatch();
   const { token } = useAuth();
 
-  console.log(token, ":Token is here");
-
   const {
     register,
     handleSubmit,

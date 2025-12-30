@@ -12,7 +12,7 @@ export default function ProjectCard({ project }) {
 
       {/* Placeholder description (until later) */}
       <p className="text-sm text-gray-700 mb-4">
-        This is a description for the project
+        {project.description || "No description provided."}
       </p>
 
       <div className="flex items-center justify-between text-xs text-gray-600">
