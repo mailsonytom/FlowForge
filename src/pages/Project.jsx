@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, NavLink } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { loadPages, clearPages, addPage } from "../store/slices/page.slice";
 
@@ -28,7 +28,15 @@ export default function Project() {
 
   return (
     <div>
-      <h1 className="text-xl font-semibold mb-4">Pages</h1>
+      <div className="mb-6 flex items-center justify-between">
+        <h1 className="text-xl font-semibold mb-4">Pages</h1>
+        <NavLink
+          to={`/projects/${projectId}/settings`}
+          className="block px-3 py-2 rounded bg-gray-200 text-sm"
+        >
+          Manage Access
+        </NavLink>
+      </div>
 
       <div className="grid grid-cols-3 gap-4">
         {items.map((page) => (

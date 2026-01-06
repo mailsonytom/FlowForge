@@ -3,9 +3,12 @@ import { apiClient } from "../../services/apiClient";
 
 export const loadUsers = createAsyncThunk(
   "users/load",
-  async (_, { rejectWithValue }) => {
+  async ({ token, user }, { rejectWithValue }) => {
     try {
-      return await apiClient("/users");
+      return await apiClient("/users", {
+        token,
+        user,
+      });
     } catch (err) {
       return rejectWithValue(err.message);
     }

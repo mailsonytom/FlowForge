@@ -1,7 +1,7 @@
 import { http, HttpResponse } from "msw";
 
 // let projects = [];
-let users = [];
+// let users = [];
 let pages = [];
 let workflows = [];
 let workflowVersions = [];
@@ -107,7 +107,7 @@ export const handlers = [
 
   // GET /users
   http.get("/users", () => {
-    return HttpResponse.json(users, { status: 200 });
+    return HttpResponse.json(mockUsers, { status: 200 });
   }),
 
   // POST /users

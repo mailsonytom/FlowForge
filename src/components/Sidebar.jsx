@@ -1,9 +1,8 @@
-import { NavLink, useParams } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import { useAuth } from "../auth/useAuth";
 
 export default function Sidebar() {
   const { user } = useAuth();
-  const { projectId } = useParams();
 
   return (
     <aside className="w-56 border-r bg-white flex flex-col ">
@@ -38,12 +37,6 @@ export default function Sidebar() {
               className="block px-3 py-2 rounded bg-gray-100"
             >
               Add User
-            </NavLink>
-            <NavLink
-              to={`/projects/${projectId}/settings`}
-              className="block px-3 py-2 rounded bg-gray-100"
-            >
-              Settings
             </NavLink>
           </>
         )}

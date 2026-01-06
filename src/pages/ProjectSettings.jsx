@@ -1,7 +1,9 @@
+import React, { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { updateProjectMembers } from "../store/slices/project.slice";
 import { useAuth } from "../auth/useAuth";
+import { loadUsers } from "../store/slices/user.slice";
 
 export default function ProjectSettings() {
   const { projectId } = useParams();
@@ -12,8 +14,13 @@ export default function ProjectSettings() {
     state.projects.items.find((p) => p.id === projectId)
   );
 
-  const users = useAppSelector((state) => state.users.items);
-  console.log("users", users);
+  useEffect(() => {
+    dispatch(loadUsers({ token, user }));
+  }, [dispatch, token, user]);
+
+  const users = useAppSelector((state) =>
+    state.users.items.filter((u) => u.role !== "admin")
+  );
 
   if (!project) return null;
 
