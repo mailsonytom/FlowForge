@@ -10,14 +10,14 @@ import ProjectCard from "../components/ProjectCard";
 
 function Dashboard() {
   const dispatch = useAppDispatch();
-  const { token } = useAuth();
+  const { token, user } = useAuth();
   // const navigate = useNavigate();
 
   const { items, loading, error } = useAppSelector((state) => state.projects);
 
   useEffect(() => {
-    dispatch(loadProjects({ token }));
-  }, [dispatch, token]);
+    dispatch(loadProjects({ token, user }));
+  }, [dispatch, token, user]);
 
   if (loading) return <p>Loading projects...</p>;
   if (error) {

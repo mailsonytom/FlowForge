@@ -1,9 +1,10 @@
 import { http, HttpResponse } from "msw";
 
-let projects = [];
+// let projects = [];
 let users = [];
 let pages = [];
 let workflows = [];
+let workflowVersions = [];
 
 const mockUsers = [
   {
@@ -26,6 +27,21 @@ const mockUsers = [
     email: "user@test.com",
     password: "user123",
     role: "user",
+  },
+];
+
+let projects = [
+  {
+    id: "p1",
+    name: "FlowForge",
+    status: "active",
+    members: ["1", "2"], // Admin + Manager
+  },
+  {
+    id: "p2",
+    name: "Internal Tool",
+    status: "active",
+    members: ["1", "3"], // Admin + User
   },
 ];
 
@@ -60,10 +76,17 @@ export const handlers = [
   }),
 
   // GET /projects
-  http.get("/projects", () => {
-    return HttpResponse.json(projects, {
-      status: 200,
-    });
+  http.get("/projects", ({ request }) => {
+    const userId = request.headers.get("x-user-id");
+    const userRole = request.headers.get("x-user-role");
+
+    if (userRole === "admin") {
+      return HttpResponse.json(projects, { status: 200 });
+    }
+
+    const visibleProjects = projects.filter((p) => p.members.includes(userId));
+
+    return HttpResponse.json(visibleProjects, { status: 200 });
   }),
 
   // POST /projects
@@ -164,10 +187,21 @@ export const handlers = [
       );
     }
 
+    const newVersion = {
+      id: Date.now().toString(),
+      pageId: params.pageId,
+      version: workflow.currentVersion + 1,
+      description: [...workflow.description],
+      approvedBy: "Manager",
+      approvedAt: new Date().toISOString(),
+    };
+
+    workflowVersions.push(newVersion);
+
     workflow.status = "approved";
-    workflow.currentVersion += 1;
-    workflow.approvedBy = "Manager";
-    workflow.approvedAt = new Date().toISOString();
+    workflow.currentVersion = newVersion.version;
+    workflow.approvedBy = newVersion.approvedBy;
+    workflow.approvedAt = newVersion.approvedAt;
 
     return HttpResponse.json(workflow, { status: 200 });
   }),
@@ -186,5 +220,30 @@ export const handlers = [
     workflow.status = "rejected";
 
     return HttpResponse.json(workflow, { status: 200 });
+  }),
+
+  // GET /pages/:pageId/workflow/versions
+  http.get("/pages/:pageId/workflow/versions", ({ params }) => {
+    const versions = workflowVersions.filter((v) => v.pageId === params.pageId);
+
+    return HttpResponse.json(versions, { status: 200 });
+  }),
+
+  // PATCH /projects/:projectId/members - update project members
+  http.patch("/projects/:projectId/members", async ({ request, params }) => {
+    const { members } = await request.json();
+
+    const project = projects.find((p) => p.id === params.projectId);
+
+    if (!project) {
+      return HttpResponse.json(
+        { message: "Project not found" },
+        { status: 404 }
+      );
+    }
+
+    project.members = members;
+
+    return HttpResponse.json(project, { status: 200 });
   }),
 ];

@@ -1,5 +1,9 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { fetchProjects, createProject } from "../../services/project.service";
+import {
+  // fetchProjects,
+  createProject,
+} from "../../services/project.service";
+import { apiClient } from "../../services/apiClient";
 
 const initialState = {
   items: [], // list of projects
@@ -9,9 +13,12 @@ const initialState = {
 
 export const loadProjects = createAsyncThunk(
   "projects/load",
-  async ({ token }, { rejectWithValue }) => {
+  async ({ token, user }, { rejectWithValue }) => {
     try {
-      return await fetchProjects(token);
+      return await apiClient("/projects", {
+        token,
+        user,
+      });
     } catch (err) {
       return rejectWithValue(err.message);
     }
@@ -24,6 +31,22 @@ export const addNewProject = createAsyncThunk(
     console.log("Creating project with data:", data, "and token:", token);
     try {
       return await createProject(data, token);
+    } catch (err) {
+      return rejectWithValue(err.message);
+    }
+  }
+);
+
+export const updateProjectMembers = createAsyncThunk(
+  "projects/updateMembers",
+  async ({ projectId, members, token, user }, { rejectWithValue }) => {
+    try {
+      return await apiClient(`/projects/${projectId}/members`, {
+        method: "PATCH",
+        body: { members },
+        token,
+        user,
+      });
     } catch (err) {
       return rejectWithValue(err.message);
     }
@@ -50,6 +73,12 @@ const projectSlice = createSlice({
       })
       .addCase(addNewProject.fulfilled, (state, action) => {
         state.items.push(action.payload);
+      })
+      .addCase(updateProjectMembers.fulfilled, (state, action) => {
+        const index = state.items.findIndex((p) => p.id === action.payload.id);
+        if (index !== -1) {
+          state.items[index] = action.payload;
+        }
       });
   },
 });

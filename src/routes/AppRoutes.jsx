@@ -11,6 +11,7 @@ import AddProject from "../pages/AddProject.jsx";
 import AddUser from "../pages/AddUser.jsx";
 import Project from "../pages/Project.jsx";
 import Workflow from "../pages/Workflow.jsx";
+import ProjectSettings from "../pages/ProjectSettings.jsx";
 
 export function AppRoutes() {
   const { login, logout } = useAuth();
@@ -63,6 +64,14 @@ export function AppRoutes() {
           element={
             <ProtectedRoute allowedRoles={ROLE_ACCESS.WORKFLOW_EDIT}>
               <Workflow />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/projects/:projectId/settings"
+          element={
+            <ProtectedRoute allowedRoles={ROLE_ACCESS.ADD_PROJECT}>
+              <ProjectSettings />
             </ProtectedRoute>
           }
         />

@@ -8,6 +8,10 @@ import {
   approveWorkflow,
   rejectWorkflow,
 } from "../store/slices/workflow.slice";
+import {
+  loadWorkflowVersions,
+  clearWorkflowVersions,
+} from "../store/slices/workflowVersion.slice";
 import { useAuth } from "../auth/useAuth";
 
 export default function Workflow() {
@@ -16,13 +20,19 @@ export default function Workflow() {
   const { user } = useAuth();
 
   const { item, loading } = useAppSelector((state) => state.workflow);
+  const { items: versions } = useAppSelector((state) => state.workflowVersions);
 
   const [editMode, setEditMode] = useState(false);
   const [lines, setLines] = useState([]);
 
   useEffect(() => {
     dispatch(loadWorkflow({ pageId }));
-    return () => dispatch(clearWorkflow());
+    dispatch(loadWorkflowVersions({ pageId }));
+
+    return () => {
+      dispatch(clearWorkflow());
+      dispatch(clearWorkflowVersions());
+    };
   }, [dispatch, pageId]);
 
   useEffect(() => {
@@ -51,6 +61,7 @@ export default function Workflow() {
     <div className="max-w-2xl">
       <div className="flex justify-between mb-4">
         <h2 className="text-lg font-semibold">Workflow</h2>
+
         <span
           className={`inline-block mb-4 px-2 py-1 text-xs rounded ${
             item?.status === "approved"
@@ -104,6 +115,30 @@ export default function Workflow() {
           ))}
         </ul>
       )}
+      <div className="mt-10">
+        <h3 className="font-semibold mb-3">Version History</h3>
+
+        {versions.length === 0 && (
+          <p className="text-sm text-gray-500">No approved versions yet</p>
+        )}
+
+        <ul className="space-y-3">
+          {versions.map((v) => (
+            <li key={v.id} className="border p-3 rounded bg-gray-50">
+              <div className="flex justify-between text-sm mb-2">
+                <span>v{v.version}</span>
+                <span>{new Date(v.approvedAt).toLocaleString()}</span>
+              </div>
+
+              <ul className="list-disc pl-5 text-sm">
+                {v.description.map((d, i) => (
+                  <li key={i}>{d}</li>
+                ))}
+              </ul>
+            </li>
+          ))}
+        </ul>
+      </div>
 
       {user.role === "manager" && item?.status === "pending_approval" && (
         <div className="flex gap-3 mt-6">
