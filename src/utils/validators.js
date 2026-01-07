@@ -28,4 +28,6 @@ export const userSchema = yup.object({
     .string()
     .oneOf(["admin", "manager", "user"])
     .required("Role is required"),
+
+  projects: yup.array().of(yup.string()).optional(),
 });

@@ -1,11 +1,17 @@
+import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { userSchema } from "../utils/validators";
-import { useAppDispatch } from "../store/hooks";
+import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { addUser } from "../store/slices/user.slice";
+import { loadProjects } from "../store/slices/project.slice";
+import { useAuth } from "../auth/useAuth";
 
 export default function AddUser() {
   const dispatch = useAppDispatch();
+  const projects = useAppSelector((state) => state.projects.items);
+
+  const { token, user } = useAuth();
 
   const {
     register,
@@ -15,6 +21,10 @@ export default function AddUser() {
   } = useForm({
     resolver: yupResolver(userSchema),
   });
+
+  useEffect(() => {
+    dispatch(loadProjects({ token, user }));
+  }, [dispatch, token, user]);
 
   const onSubmit = async (data) => {
     await dispatch(addUser(data));
@@ -56,6 +66,21 @@ export default function AddUser() {
           <option value="user">User</option>
         </select>
         {errors.role && <p className="text-red-500">{errors.role.message}</p>}
+
+        <select
+          multiple={true}
+          className="border p-2 w-full"
+          {...register("projects")}
+        >
+          {projects.map((project) => (
+            <option key={project.id} value={project.id}>
+              {project.name}
+            </option>
+          ))}
+        </select>
+        {errors.projects && (
+          <p className="text-red-500">{errors.projects.message}</p>
+        )}
 
         <button
           type="submit"
